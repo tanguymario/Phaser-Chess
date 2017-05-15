@@ -6,6 +6,8 @@ debugThemes = require '../utils/debug-themes.coffee'
 Board = require './board/board.coffee'
 Square = require '../utils/geometry/square.coffee'
 
+Team = require './pieces/team.coffee'
+
 Coordinates = require '../utils/coordinates.coffee'
 
 class Chess
@@ -23,6 +25,7 @@ class Chess
     @game = game
     @config = chessConfig
     @players = players
+    @turn = Team.White
 
     # For now, we supppose that board gets all game size
     boardSize = Math.min @game.width, @game.height
@@ -33,11 +36,10 @@ class Chess
     boardTopLeft = new Coordinates boardTopLeftX, boardTopLeftY
 
     boardView = new Square boardTopLeft, boardSize
-    @board = new Board @game, boardConfig, boardTheme, piecesTheme, boardView
+    board = new Board @game, @, boardConfig, boardTheme, piecesTheme, boardView
 
     @history = []
-
-
+    @movesCount = 0
 
 
 module.exports = Chess

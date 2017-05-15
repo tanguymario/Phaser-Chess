@@ -6,8 +6,8 @@ debugThemes = require '../../utils/debug-themes.coffee'
 Piece = require './piece.coffee'
 
 class Bishop extends Piece
-  constructor: (game, currCase, type, theme) ->
-    super game, currCase, type, theme
+  constructor: (game, board, currCase, type, theme) ->
+    super game, board, currCase, type, theme
 
 
 module.exports = Bishop

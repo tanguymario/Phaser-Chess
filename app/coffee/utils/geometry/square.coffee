@@ -24,7 +24,7 @@ class Square extends Polygon
   getCenter: ->
     center = @getTopLeft().clone()
     halfSize = @size / 2
-    
+
     center.x += halfSize
     center.y += halfSize
     return center
@@ -48,6 +48,24 @@ class Square extends Polygon
 
   getBottomRight: ->
     return @points[2]
+
+
+  isInside: (coords, checkBorder) ->
+    assert coords instanceof Coordinates, "Coordinates missing"
+
+    topLeft = @getTopLeft()
+    bottomRight = @getBottomRight()
+
+    if not checkBorder
+      coordsOne = Coordinates.One()
+      topLeft = Coordinates.Add topLeft, coordsOne
+      bottomRight = Coordinates.Sub bottomRight, coordsOne
+
+    if coords.x >= topLeft.x and coords.x <= bottomRight.x
+      if coords.y >= topLeft.y and coords.y <= bottomRight.y
+        return true
+
+    return false
 
 
   toString: ->
