@@ -3,11 +3,19 @@ assert = require '../../utils/assert.coffee'
 debug       = require '../../utils/debug.coffee'
 debugThemes = require '../../utils/debug-themes.coffee'
 
-Piece = require './piece.coffee'
+PieceSingleMove = require './piece-single-move.coffee'
 
 Coordinates = require '../../utils/coordinates.coffee'
 
-class Pawn extends Piece
+class Pawn extends PieceSingleMove
+  @R_MOVES = [
+    new Coordinates 0, -1 # North
+  ]
+
+  @R_SPECIAL_MOVES =
+    DoubleForward: new Coordinates 0, -2
+
+
   constructor: (game, board, currCase, type, theme) ->
     super game, board, currCase, type, theme
     @hasDoneFirstMove = false
@@ -16,19 +24,14 @@ class Pawn extends Piece
   calculatePossibleMoves: ->
     super
 
-    tempCases = []
+    moves = @getMovesFromCoords Pawn.R_MOVES
 
-    tempCaseCoords = @currCase.boardCoords.clone()
-    tempCaseCoords.y -= 1
-
-    tempCases.push @board.getCaseAtBoardCoords tempCaseCoords
-
+    # Manage first move
     if not @hasDoneFirstMove
-      tempCaseCoords.y -= 1
-      tempCases.push @board.getCaseAtBoardCoords tempCaseCoords
+      tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_SPECIAL_MOVES.DoubleForward
+      moves.push @board.getCaseAtBoardCoords tempCoords
 
-    console.log tempCases
-    @setPossibleMovesFromArray tempCases
+    @setPossibleMovesFromArray moves
 
 
   moveTo: (caseToGo) ->

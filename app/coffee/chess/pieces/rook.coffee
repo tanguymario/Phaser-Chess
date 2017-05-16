@@ -3,17 +3,18 @@ assert = require '../../utils/assert.coffee'
 debug       = require '../../utils/debug.coffee'
 debugThemes = require '../../utils/debug-themes.coffee'
 
-Piece = require './piece.coffee'
+PieceMultipleMoves = require './piece-multiple-moves.coffee'
 
 Coordinates = require '../../utils/coordinates.coffee'
 
-class Rook extends Piece
-  @R_COORDS_POSSIBLES = [
-    new Coordinates 1, 0 # East
+class Rook extends PieceMultipleMoves
+  @R_MOVES = [
     new Coordinates -1, 0 # West
-    new Coordinates 0, 1 # South
     new Coordinates 0, -1 # North
+    new Coordinates 1, 0 # East
+    new Coordinates 0, 1 # South
   ]
+
 
   constructor: (game, board, currCase, type, theme) ->
     super game, board, currCase, type, theme
@@ -22,20 +23,8 @@ class Rook extends Piece
   calculatePossibleMoves: ->
     super
 
-    coordsPossibles = Rook.R_COORDS_POSSIBLES.splice 0
-
-    while coordsPossibles.length > 0
-      for i in [0...coordsPossibles.length] by 1
-        coords = coordsPossibles[i]
-        console.log i
-        tempCaseCoords = Coordinates.Add @currCase.boardCoords, coords
-        caseAtCoords = @board.getCaseAtBoardCoords tempCaseCoords
-        if @isCasePossible caseAtCoords
-          tempCases.push caseAtCoords
-        else
-          coordsPossibles.splice i, 1
-
-    @setPossibleMovesFromArray tempCases
+    moves = @getMovesFromCoords Rook.R_MOVES
+    @setPossibleMovesFromArray moves
 
 
 module.exports = Rook

@@ -32,9 +32,12 @@ class Piece
     @sprite.events.onInputDown.add @downHandler, @
     @sprite.events.onInputUp.add @upHandler, @
 
-
     if @type.team == @board.chess.turn
       @enableInput()
+
+
+  getMovesFromCoords: (directions) ->
+    undefined # Defined in children's class
 
 
   updateInput: ->
