@@ -12,15 +12,13 @@ Matrix = require '../../utils/math/matrix.coffee'
 Case = require './case.coffee'
 
 class Board
-  constructor: (game, chess, boardConfig, boardTheme, piecesTheme, squareView) ->
-    assert boardConfig?, "Board Config missing"
-    assert boardTheme?, "Board Theme missing"
+  constructor: (game, chess, configs, themes, squareView) ->
     assert squareView instanceof Square, "Rectangle view missing"
 
     @game = game
     @chess = chess
-    @config = boardConfig
-    @theme = boardTheme
+    @config = configs.board
+    @theme = themes.board
     @view = squareView
 
     viewCenter = @view.getCenter()
@@ -49,11 +47,14 @@ class Board
         gameCoords.x += boardCoords.x * @caseSize + @caseSize / 2
         gameCoords.y += boardCoords.y * @caseSize + @caseSize / 2
 
-        @tab[i][j] = new Case @game, @, boardCoords, gameCoords
+        @tab[i][j] = new Case @game, @, boardCoords, gameCoords, themes
         if @config[i][j]?
           currCase = @tab[i][j]
-          currCase.piece = new @config[i][j].instance @game, @, currCase, @config[i][j], piecesTheme
+          currCase.piece = new @config[i][j].instance @game, @, currCase, @config[i][j], themes
     @tab = new Matrix @tab
+
+    @updatePieces()
+
 
   # Return the case at game coords
   getCaseAtGameCoords: (coords) ->
@@ -67,6 +68,14 @@ class Board
       gridCoords = new Coordinates column, line
       return @getCaseAtBoardCoords gridCoords
     return null
+
+
+  updatePieces: ->
+    for i in [0...@tab.width] by 1
+      for j in [0...@tab.height] by 1
+        myCase = @tab.getAt i, j
+        if myCase.piece?
+          myCase.piece.calculatePossibleMoves()
 
 
   # Return a case in at grid coords

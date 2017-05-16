@@ -14,17 +14,17 @@ class Chess
   @V_MIN_PLAYERS = 2
   @V_MAX_PLAYERS = 2
 
-  constructor: (game, chessConfig, boardConfig, boardTheme, piecesTheme, players...) ->
+  constructor: (game, configs, themes, players...) ->
     assert game?, "Game missing"
-    assert chessConfig?, "Chess config missing"
-    assert boardConfig?, "Board Config missing"
-    assert piecesTheme?, "Pieces Theme missing"
+    assert configs?, "Configs missing"
+    assert themes?, "Themes missing"
     assert players.length >= Chess.V_MIN_PLAYERS, "Not enough players"
     assert players.length <= Chess.V_MAX_PLAYERS, "Too much players"
 
     @game = game
-    @config = chessConfig
+    @config = configs.chessConfig
     @players = players
+
     @turn = Team.White
 
     # For now, we supppose that board gets all game size
@@ -36,10 +36,9 @@ class Chess
     boardTopLeft = new Coordinates boardTopLeftX, boardTopLeftY
 
     boardView = new Square boardTopLeft, boardSize
-    board = new Board @game, @, boardConfig, boardTheme, piecesTheme, boardView
+    board = new Board @game, @, configs, themes, boardView
 
     @history = []
-    @movesCount = 0
 
 
 module.exports = Chess

@@ -11,6 +11,8 @@ ChessConfig = require '../chess/config/chess-config.coffee'
 BoardConfig = require '../chess/board/board-config.coffee'
 BoardTheme = require '../chess/board/board-theme.coffee'
 
+CasesTheme = require '../chess/board/cases-theme.coffee'
+
 PiecesTheme = require '../chess/pieces/pieces-theme.coffee'
 
 PlayerHuman = require '../chess/player/player-human.coffee'
@@ -22,14 +24,18 @@ class Game extends Phaser.State
     super
 
     @chessConfig = ChessConfig.classic
+
     @boardTheme = BoardTheme.classic
     @boardConfig = BoardConfig.classic
+
+    @casesTheme = CasesTheme.classic
     @piecesTheme = PiecesTheme.classic
 
 
   preload: ->
     debug 'Preload...', @, 'info', 30, debugThemes.Phaser
     @game.load.image @boardTheme.key, @boardTheme.src
+    @game.load.image @casesTheme.possibility.key, @casesTheme.possibility.src
     @game.load.spritesheet @piecesTheme.key, @piecesTheme.src, @piecesTheme.sprite.width, @piecesTheme.sprite.height
 
 
@@ -39,7 +45,10 @@ class Game extends Phaser.State
     player1 = new PlayerHuman @game
     player2 = new PlayerAi @game
 
-    @chess = new Chess @game, @chessConfig, @boardConfig, @boardTheme, @piecesTheme, player1, player2
+    configs = { chess: @chessConfig, board: @boardConfig }
+    themes = { board: @boardTheme, pieces: @piecesTheme, cases: @casesTheme }
+
+    @chess = new Chess @game, configs, themes, player1, player2
 
 
   toggleFullscreen: ->

@@ -8,19 +8,17 @@ CanvasUtils = require '../../utils/canvas-utils.coffee'
 class Piece
   @V_TIME_MOVE = 1000
 
-  constructor: (game, board, currCase, type, theme) ->
+  constructor: (game, board, currCase, type, themes) ->
     assert currCase?, "Current Case missing"
     assert type?, "Type missing"
-    assert theme?, "Theme missing"
 
     @game = game
     @board = board
     @currCase = currCase
     @type = type
-    @theme = theme
+    @theme = themes.pieces
     @tweenMove = null
     @possibleMoves = []
-    @lastMoveCount = -1
 
     pos = currCase.gameCoords
     @sprite = @game.add.sprite pos.x, pos.y, @theme.key, @type.spriteFrame
@@ -37,7 +35,11 @@ class Piece
 
 
   getMovesFromCoords: (directions) ->
-    undefined # Defined in children's class
+    undefined # Defined in childrens
+
+
+  calculatePossibleMoves: ->
+    undefined # Defined in childrens
 
 
   updateInput: ->
@@ -56,12 +58,13 @@ class Piece
   moveTo: (caseToGo) ->
     assert caseToGo?, "Case To Go doesn't exist"
     @goToCase caseToGo
+    @hidePossibilities()
     if caseToGo != @currCase
       @currCase.piece = null
       @currCase = caseToGo
       @currCase.piece = @
       @possibleMoves = []
-      @board.chess.movesCount += 1
+      @board.updatePieces()
 
 
   enableInput: ->
@@ -80,21 +83,18 @@ class Piece
         @possibleMoves.push tempCase
 
 
-  calculatePossibleMoves: ->
-    if @possibleMoves? or @lastMoveCount >= @board.chess.movesCount
-      return
-
-    @lastMoveCount = @board.chess.movesCount
+  hidePossibilities: ->
+    for possibility in @possibleMoves
+      possibility.hidePossible()
 
 
   showPossibilities: ->
     for possibility in @possibleMoves
-      a = 1 # TODO
+      possibility.showPossible()
 
 
   downHandler: (sprite, event) ->
     console.log "down"
-    @calculatePossibleMoves()
     @showPossibilities()
     if @tweenMove?
       @tweenMove.stop false
