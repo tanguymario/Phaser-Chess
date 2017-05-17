@@ -19,6 +19,21 @@ class Case
     @possibility = new CasePossibility @game, @, themes
 
 
+  setPiece: (piece) ->
+    @piece = piece
+    @piece.currCase = @
+
+
+  removePiece: (destroy = false) ->
+    if not @piece?
+      return
+
+    if destroy
+      @piece.sprite.destroy()
+
+    @piece = null
+
+
   showPossible: ->
     @possibility.showPossible()
 

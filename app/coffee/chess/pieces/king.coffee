@@ -12,14 +12,14 @@ DirectionUtils = require '../../utils/direction-utils.coffee'
 
 class King extends PieceSingleMove
   @R_MOVES = [
-    new Coordinates -1, 0 # West
-    new Coordinates -1, -1 # North West
-    new Coordinates 0, -1 # North
-    new Coordinates 1, -1 # North East
-    new Coordinates 1, 0 # East
-    new Coordinates 1, 1 # South East
-    new Coordinates 0, 1 # South
-    new Coordinates -1, 1 # South West
+    new Coordinates -1, 0
+    new Coordinates -1, -1
+    new Coordinates 0, -1
+    new Coordinates 1, -1
+    new Coordinates 1, 0
+    new Coordinates 1, 1
+    new Coordinates 0, 1
+    new Coordinates -1, 1
   ]
 
 

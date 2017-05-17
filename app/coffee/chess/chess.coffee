@@ -36,9 +36,38 @@ class Chess
     boardTopLeft = new Coordinates boardTopLeftX, boardTopLeftY
 
     boardView = new Square boardTopLeft, boardSize
-    board = new Board @game, @, configs, themes, boardView
+    @board = new Board @game, @, configs, themes, boardView
 
     @history = []
+
+
+  onPieceMove: (piece, newCase) ->
+    if piece.currCase == newCase
+      return
+
+    # If there's a piece, it's an ennemy!
+    destroy = newCase.piece?
+    newCase.removePiece destroy
+
+    # Remove player piece from old case
+    oldCase = piece.currCase
+    oldCase.removePiece false
+
+    # Piece affected to new case
+    newCase.setPiece piece
+
+    @changeTurn()
+
+    # Update all pieces on the board
+    @board.updatePieces()
+
+
+  changeTurn: ->
+    if @turn == Team.White
+      @turn = Team.Black
+    else
+      @turn = Team.White
+
 
 
 module.exports = Chess

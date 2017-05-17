@@ -21,17 +21,18 @@ class Piece
     @possibleMoves = []
 
     pos = currCase.gameCoords
+
+    # Sprite creation
     @sprite = @game.add.sprite pos.x, pos.y, @theme.key, @type.spriteFrame
     @sprite.anchor.setTo 0.5, 0.5
 
-    @scaleFactor = currCase.board.caseSize / @sprite.width
+    # Sprite scale
+    @scaleFactor = @currCase.board.caseSize / @sprite.width
     @sprite.scale.setTo @scaleFactor
 
+    # Sprite events
     @sprite.events.onInputDown.add @downHandler, @
     @sprite.events.onInputUp.add @upHandler, @
-
-    if @type.team == @board.chess.turn
-      @enableInput()
 
 
   getMovesFromCoords: (directions) ->
@@ -39,6 +40,7 @@ class Piece
 
 
   calculatePossibleMoves: ->
+    @possibleMoves = []
     undefined # Defined in childrens
 
 
@@ -55,26 +57,10 @@ class Piece
     @tweenMove.start()
 
 
-  destroy: ->
-    @sprite.destroy()
-    @currCase.piece = null
-
-
   moveTo: (caseToGo) ->
-    assert caseToGo?, "Case To Go doesn't exist"
-    @goToCase caseToGo
     @hidePossibilities()
-    if caseToGo != @currCase
-      if caseToGo.piece?
-        # That's an ennemy
-        caseToGo.piece.sprite.destroy()
-        caseToGo.piece = null
-
-      @currCase.piece = null
-      @currCase = caseToGo
-      @currCase.piece = @
-      @possibleMoves = []
-      @board.updatePieces()
+    @goToCase caseToGo
+    @board.chess.onPieceMove(@, caseToGo)
 
 
   enableInput: ->
@@ -83,6 +69,9 @@ class Piece
 
 
   disableInput: ->
+    if not @sprite.inputEnabled
+      return
+
     @sprite.input.disableDrag false
     @sprite.inputEnabled = false
 

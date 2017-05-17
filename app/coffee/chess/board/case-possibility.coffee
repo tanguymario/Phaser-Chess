@@ -15,7 +15,7 @@ class CasePossibility extends Phaser.Sprite
     @alpha = 0
     @visible = false
     @tween = null
-
+    
     @game.add.existing(@)
 
 

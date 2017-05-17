@@ -27,11 +27,12 @@ class PieceMultipleMoves extends Piece
         tempCaseCoords = Coordinates.Add @currCase.boardCoords, possibility.coords
         caseAtCoords = @board.getCaseAtBoardCoords tempCaseCoords
         if @isCasePossible caseAtCoords
-          if caseAtCoords.piece?
-            possibilities.splice i, 1
-
           tempCases.push caseAtCoords
-          i += 1
+          if caseAtCoords.piece?
+            # Ennemy found
+            possibilities.splice i, 1
+          else
+            i += 1
         else
           possibilities.splice i, 1
 

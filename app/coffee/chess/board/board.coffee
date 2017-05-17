@@ -80,6 +80,7 @@ class Board
         myCase = @tab.getAt i, j
         if myCase.piece?
           myCase.piece.calculatePossibleMoves()
+          myCase.piece.updateInput()
 
 
   # Return a case in at grid coords
