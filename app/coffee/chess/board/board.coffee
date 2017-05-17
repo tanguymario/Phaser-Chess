@@ -53,6 +53,7 @@ class Board
           currCase.piece = new @config[i][j].instance @game, @, currCase, @config[i][j], themes
     @tab = new Matrix @tab
 
+    @updateTeams()
     @updatePieces()
 
 
@@ -74,13 +75,31 @@ class Board
     return false
 
 
-  updatePieces: ->
+  updateTeams: ->
+    @teams = {}
     for i in [0...@tab.width] by 1
       for j in [0...@tab.height] by 1
         myCase = @tab.getAt i, j
-        if myCase.piece?
-          myCase.piece.calculatePossibleMoves()
-          myCase.piece.updateInput()
+        piece = myCase.piece
+        if piece?
+          pieceTeam = piece.type.team
+          if not @teams[pieceTeam]?
+            @teams[pieceTeam] = []
+
+          @teams[pieceTeam].push piece
+
+
+  updatePieces: ->
+    currentTeam = @teams[@chess.turn]
+    assert currentTeam?, "Current Team not found"
+
+    for piece in currentTeam
+      piece.calculatePossibleMoves()
+
+    # Update input for all pieces
+    for teamKey, teamValue of @teams
+      for piece in teamValue
+        piece.updateInput()
 
 
   # Return a case in at grid coords

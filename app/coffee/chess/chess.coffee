@@ -46,8 +46,10 @@ class Chess
       return
 
     # If there's a piece, it's an ennemy!
-    destroy = newCase.piece?
-    newCase.removePiece destroy
+    ennemyAttacked = newCase.piece?
+    newCase.removePiece ennemyAttacked
+    if ennemyAttacked
+      @board.updateTeams()
 
     # Remove player piece from old case
     oldCase = piece.currCase
