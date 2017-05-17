@@ -8,12 +8,11 @@ PieceSingleMove = require './piece-single-move.coffee'
 Coordinates = require '../../utils/coordinates.coffee'
 
 class Pawn extends PieceSingleMove
-  @R_MOVES = [
-    new Coordinates 0, -1 # North
-  ]
-
-  @R_SPECIAL_MOVES =
-    DoubleForward: new Coordinates 0, -2
+  @R_MOVES =
+    forward: new Coordinates 0, -1 # North
+    forward_left: new Coordinates -1, -1
+    forward_right: new Coordinates 1, -1
+    double_forward: new Coordinates 0, -2 # North, North
 
 
   constructor: (game, board, currCase, type, theme) ->
@@ -24,14 +23,30 @@ class Pawn extends PieceSingleMove
   calculatePossibleMoves: ->
     super
 
-    moves = @getMovesFromCoords Pawn.R_MOVES
+    moves = []
 
-    # Manage first move
-    if not @hasDoneFirstMove
-      tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_SPECIAL_MOVES.DoubleForward
-      moves.push @board.getCaseAtBoardCoords tempCoords
+    tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_MOVES.forward
+    tempCase = @board.getCaseAtBoardCoords tempCoords
+    if tempCase? and not tempCase.piece?
+      moves.push tempCase
+      if not @hasDoneFirstMove and not tempCase.piece
+        # Manage first move
+        tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_MOVES.double_forward
+        tempCase = @board.getCaseAtBoardCoords tempCoords
+        if tempCase? and not tempCase.piece?
+          moves.push @board.getCaseAtBoardCoords tempCoords
 
-    @setPossibleMovesFromArray moves
+    tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_MOVES.forward_left
+    tempCase = @board.getCaseAtBoardCoords tempCoords
+    if tempCase? and tempCase.piece? and tempCase.piece.type.team != @type.team
+      moves.push tempCase
+
+    tempCoords = Coordinates.Add @currCase.boardCoords, Pawn.R_MOVES.forward_right
+    tempCase = @board.getCaseAtBoardCoords tempCoords
+    if tempCase? and tempCase.piece? and tempCase.piece.type.team != @type.team
+      moves.push tempCase
+
+    @setPossibleMovesFromArray moves, false
 
 
   moveTo: (caseToGo) ->

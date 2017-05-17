@@ -70,6 +70,10 @@ class Board
     return null
 
 
+  isKingInCheck: (pieceToMove) ->
+    return false
+
+
   updatePieces: ->
     for i in [0...@tab.width] by 1
       for j in [0...@tab.height] by 1

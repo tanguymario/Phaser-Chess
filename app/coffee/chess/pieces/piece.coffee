@@ -55,11 +55,21 @@ class Piece
     @tweenMove.start()
 
 
+  destroy: ->
+    @sprite.destroy()
+    @currCase.piece = null
+
+
   moveTo: (caseToGo) ->
     assert caseToGo?, "Case To Go doesn't exist"
     @goToCase caseToGo
     @hidePossibilities()
     if caseToGo != @currCase
+      if caseToGo.piece?
+        # That's an ennemy
+        caseToGo.piece.sprite.destroy()
+        caseToGo.piece = null
+
       @currCase.piece = null
       @currCase = caseToGo
       @currCase.piece = @
@@ -77,9 +87,9 @@ class Piece
     @sprite.inputEnabled = false
 
 
-  setPossibleMovesFromArray: (tempCases) ->
+  setPossibleMovesFromArray: (tempCases, checkPossible = true) ->
     for tempCase in tempCases
-      if @isCasePossible tempCase
+      if not checkPossible or @isCasePossible tempCase
         @possibleMoves.push tempCase
 
 
@@ -101,7 +111,14 @@ class Piece
 
 
   isCasePossible: (caseToTest) ->
-    return caseToTest? and not caseToTest.piece?
+    if not caseToTest?
+      return false
+
+    if caseToTest.piece?
+      if caseToTest.piece.type.team == @type.team
+        return false
+
+    return true
 
 
   upHandler: (sprite, event) ->
